@@ -109,7 +109,9 @@ class Data(object):
 
         if hasattr(dest, 'write'):
             # writing to a file-like
-            if self.file is not None:
+            # only works when no unicode conversion is done
+            if self.file is not None and\
+                    getattr(self.file, 'encoding', None) is None:
                 copyfileobj(self.file, dest)
             elif self.filename is not None:
                 with open(self.filename, 'rb') as inp:
