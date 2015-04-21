@@ -36,7 +36,7 @@ def tmpfile():
 
 @pytest.fixture
 def valfile(val, tmpfile, encoding):
-    with open(tmpfile, 'w') as f:
+    with open(tmpfile, 'wb') as f:
         f.write(val.encode(encoding))
     return tmpfile
 
