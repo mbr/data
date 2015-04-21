@@ -1,3 +1,5 @@
+__version__ = '0.2.dev1'
+
 from six import text_type, PY2
 
 
