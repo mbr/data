@@ -2,12 +2,11 @@ __version__ = '0.3.dev1'
 
 from contextlib import contextmanager
 from functools import partial
-from functools import wraps
 import os
 from shutil import copyfileobj
 import tempfile
 
-from six import text_type, PY2, reraise, StringIO, BytesIO, Iterator
+from six import text_type, PY2, reraise, StringIO, BytesIO, Iterator, wraps
 
 
 def enable_unicode(enabled):
