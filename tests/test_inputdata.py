@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from contextlib import contextmanager
+from functools import partial
 import os
 import tempfile
 
@@ -128,3 +129,19 @@ def test_with_temp_saved_fn(d, val, encoding):
     with d.temp_saved() as tmp:
         tmp.close()
         assert open(tmp.name, 'rb').read() == val.encode(encoding)
+
+
+def test_unicode_reading_incremental(d, val):
+    bufsize = 4
+
+    chunks = [c for c in iter(partial(d.read, bufsize), '')]
+
+    assert u''.join(chunks) == val
+
+
+def test_bytestring_reading_incremental(d, val, encoding):
+    bufsize = 4
+
+    chunks = [c for c in iter(partial(d.readb, bufsize), b'')]
+
+    assert b''.join(chunks) == val.encode(encoding)
