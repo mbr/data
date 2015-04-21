@@ -12,7 +12,7 @@ def read(fname):
 
 setup(
     name='data',
-    version='0.1.dev1',
+    version='0.2.dev1',
     description='Work with unicode/non-unicode data from files or strings '
                 'uniformly.',
     long_description=read('README.rst'),
