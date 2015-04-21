@@ -7,7 +7,7 @@ import os
 from shutil import copyfileobj
 import tempfile
 
-from six import text_type, PY2, reraise, StringIO, BytesIO
+from six import text_type, PY2, reraise, StringIO, BytesIO, Iterator
 
 
 def enable_unicode(enabled):
@@ -24,7 +24,7 @@ def enable_unicode(enabled):
     return wrapper
 
 
-class Data(object):
+class Data(Iterator):
     data = None
     text = None
     file = None
@@ -86,6 +86,12 @@ class Data(object):
     def __iter__(self):
         return self
 
+    def __next__(self):
+        chunk = self.readline()
+        if not chunk:
+            raise StopIteration
+        return chunk
+
     def __str__(self):
         if PY2:
             return self.__bytes__()
@@ -129,12 +135,6 @@ class Data(object):
             return
 
         self.stream.close()
-
-    def next(self):
-        chunk = self.readline()
-        if not chunk:
-            raise StopIteration
-        return chunk
 
     @property
     def stream(self):
