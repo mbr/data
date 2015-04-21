@@ -6,7 +6,7 @@ import tempfile
 from six import text_type, binary_type, PY2
 import pytest
 
-from data.inputdata import InputData as I
+from data import Data as I
 
 
 @pytest.fixture(

@@ -1,7 +1,7 @@
 from six import text_type, PY2
 
 
-class InputData(object):
+class Data(object):
     data = None
     text = None
     file = None
