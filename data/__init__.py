@@ -1,8 +1,11 @@
 __version__ = '0.2.dev1'
 
+from contextlib import contextmanager
+import os
 from shutil import copyfileobj
+import tempfile
 
-from six import text_type, PY2
+from six import text_type, PY2, reraise
 
 
 class Data(object):
@@ -121,3 +124,25 @@ class Data(object):
             # destination is a filename
             with open(dest, 'wb') as out:
                 return self.save_to(out)
+
+    @contextmanager
+    def temp_saved(self, bufsize=-1, suffix='', prefix='tmp', dir=None):
+        tmp = tempfile.NamedTemporaryFile(
+            bufsize=bufsize,
+            suffix=suffix,
+            prefix=prefix,
+            dir=dir,
+            delete=False,
+        )
+
+        try:
+            self.save_to(tmp)
+            tmp.flush()
+            tmp.seek(0)
+            yield tmp
+        finally:
+            try:
+                os.unlink(tmp.name)
+            except OSError as e:
+                if e.errno != 2:
+                    reraise(e)
