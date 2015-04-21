@@ -163,3 +163,12 @@ def test_readlines(d, val):
 
 def test_close(d):
     d.close()
+    d.close()
+
+
+def test_context_manager(d):
+    with d as e:
+        assert d == e
+
+    if d.file is not None:
+        assert d.file.closed

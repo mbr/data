@@ -77,6 +77,12 @@ class Data(object):
 
         raise ValueError('Broken Data, all None.')
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        self.close()
+
     def __str__(self):
         if PY2:
             return self.__bytes__()
