@@ -126,9 +126,8 @@ class Data(object):
                 return self.save_to(out)
 
     @contextmanager
-    def temp_saved(self, bufsize=-1, suffix='', prefix='tmp', dir=None):
+    def temp_saved(self, suffix='', prefix='tmp', dir=None):
         tmp = tempfile.NamedTemporaryFile(
-            bufsize=bufsize,
             suffix=suffix,
             prefix=prefix,
             dir=dir,
