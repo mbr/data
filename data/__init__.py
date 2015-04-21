@@ -5,7 +5,7 @@ import os
 from shutil import copyfileobj
 import tempfile
 
-from six import text_type, PY2, reraise
+from six import text_type, PY2, reraise, StringIO, BytesIO
 
 
 class Data(object):
@@ -98,11 +98,34 @@ class Data(object):
             cname, self.file or self.filename, self.encoding,
         )
 
-    def read(self):
-        return self.__unicode__()
+    @property
+    def stream(self):
+        if not hasattr(self, '_stream'):
+            if self.file is not None:
+                self._stream = self.file
+            elif self.filename is not None:
+                self._stream = open(self.filename, 'rb')
+            elif self.text is not None:
+                self._stream = StringIO(self.text)
+            elif self.data is not None:
+                self._stream = BytesIO(self.data)
+            else:
+                raise ValueError('Broken Data, all None.')
+        return self._stream
 
-    def readb(self):
-        return self.__bytes__()
+    def read(self, *args, **kwargs):
+        chunk = self.stream.read(*args, **kwargs)
+
+        if not isinstance(chunk, text_type):
+            return chunk.decode(self.encoding)
+        return chunk
+
+    def readb(self, *args, **kwargs):
+        chunk = self.stream.read(*args, **kwargs)
+
+        if isinstance(chunk, text_type):
+            return chunk.encode(self.encoding)
+        return chunk
 
     def save_to(self, file):
         dest = file
