@@ -83,6 +83,9 @@ class Data(object):
     def __exit__(self, exception_type, exception_value, traceback):
         self.close()
 
+    def __iter__(self):
+        return self
+
     def __str__(self):
         if PY2:
             return self.__bytes__()
@@ -126,6 +129,12 @@ class Data(object):
             return
 
         self.stream.close()
+
+    def next(self):
+        chunk = self.readline()
+        if not chunk:
+            raise StopIteration
+        return chunk
 
     @property
     def stream(self):

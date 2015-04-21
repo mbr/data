@@ -172,3 +172,9 @@ def test_context_manager(d):
 
     if d.file is not None:
         assert d.file.closed
+
+
+def test_iteration(d, val):
+    chunks = [l for l in iter(d)]
+
+    assert ''.join(chunks) == val
