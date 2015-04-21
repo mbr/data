@@ -1,11 +1,26 @@
 __version__ = '0.3.dev1'
 
 from contextlib import contextmanager
+from functools import wraps
 import os
 from shutil import copyfileobj
 import tempfile
 
 from six import text_type, PY2, reraise, StringIO, BytesIO
+
+
+def enable_unicode(enabled):
+    def wrapper(f):
+        @wraps(f)
+        def _(self, *args, **kwargs):
+            rv = f(self, *args, **kwargs)
+            if enabled and not isinstance(rv, text_type):
+                return rv.decode(self.encoding)
+            elif not enabled and isinstance(rv, text_type):
+                return rv.encode(self.encoding)
+            return rv
+        return _
+    return wrapper
 
 
 class Data(object):
@@ -113,19 +128,14 @@ class Data(object):
                 raise ValueError('Broken Data, all None.')
         return self._stream
 
+    @enable_unicode(True)
     def read(self, *args, **kwargs):
-        chunk = self.stream.read(*args, **kwargs)
+        return self.stream.read(*args, **kwargs)
 
-        if not isinstance(chunk, text_type):
-            return chunk.decode(self.encoding)
-        return chunk
-
+    @enable_unicode(False)
     def readb(self, *args, **kwargs):
-        chunk = self.stream.read(*args, **kwargs)
+        return self.stream.read(*args, **kwargs)
 
-        if isinstance(chunk, text_type):
-            return chunk.encode(self.encoding)
-        return chunk
 
     def save_to(self, file):
         dest = file
