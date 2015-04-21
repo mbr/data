@@ -92,7 +92,7 @@ class Data(object):
         )
 
     def read(self):
-        pass
+        return self.__unicode__()
 
     def readb(self):
-        pass
+        return self.__str__()
