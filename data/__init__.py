@@ -59,7 +59,7 @@ class Data(object):
             with open(self.filename, 'rb') as f:
                 return f.read()
 
-        raise ValueError('Broken InputData, all None.')
+        raise ValueError('Broken Data, all None.')
 
     def __str__(self):
         if PY2:
