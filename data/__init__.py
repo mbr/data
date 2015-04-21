@@ -114,6 +114,13 @@ class Data(object):
             cname, self.file or self.filename, self.encoding,
         )
 
+    def close(self):
+        # only close if we have something to close
+        if getattr(self, '_stream', None) is None and self.file is None:
+            return
+
+        self.stream.close()
+
     @property
     def stream(self):
         if not hasattr(self, '_stream'):

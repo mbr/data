@@ -159,3 +159,7 @@ def test_readlines(d, val):
     buf = StringIO(val)
 
     assert buf.readlines() == d.readlines()
+
+
+def test_close(d):
+    d.close()
