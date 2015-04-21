@@ -95,4 +95,4 @@ class Data(object):
         return self.__unicode__()
 
     def readb(self):
-        return self.__str__()
+        return self.__bytes__()
