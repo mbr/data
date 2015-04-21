@@ -1,12 +1,27 @@
 # coding: utf-8
 
+from contextlib import contextmanager
 import os
 import tempfile
 
-from six import text_type, binary_type, PY2
+from six import text_type, binary_type, PY2, reraise
 import pytest
 
 from data import Data as I
+
+
+@contextmanager
+def tmpfn(*args, **kwargs):
+    try:
+        fd, fn = tempfile.mkstemp()
+        os.close(fd)
+        yield fn
+    finally:
+        try:
+            os.unlink(fn)
+        except OSError as e:
+            if e.errno != 2:
+                reraise(e)
 
 
 @pytest.fixture(
@@ -85,3 +100,20 @@ def test_getting_contents_via_read(d, val):
 
 def test_getting_contents_via_binary_read(d, val, encoding):
     assert d.readb() == val.encode(encoding)
+
+
+def test_write_to_filename(d, val, encoding):
+    with tmpfn() as fn:
+        d.save_to(fn)
+
+        with open(fn, 'rb') as f:
+            assert f.read() == val.encode(encoding)
+
+
+def test_write_to_file_obj(d, val, encoding):
+    with tempfile.NamedTemporaryFile() as tmp:
+        d.save_to(tmp)
+
+        tmp.seek(0)
+
+        assert tmp.read() == val.encode(encoding)

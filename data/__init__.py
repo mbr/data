@@ -1,5 +1,7 @@
 __version__ = '0.2.dev1'
 
+from shutil import copyfileobj
+
 from six import text_type, PY2
 
 
@@ -98,3 +100,24 @@ class Data(object):
 
     def readb(self):
         return self.__bytes__()
+
+    def save_to(self, file):
+        dest = file
+
+        if hasattr(dest, 'write'):
+            # writing to a file-like
+            if self.file is not None:
+                copyfileobj(self.file, dest)
+            elif self.filename is not None:
+                with open(self.filename, 'rb') as inp:
+                    copyfileobj(inp, dest)
+            else:
+                dest.write(self.__bytes__())
+        else:
+            # we do not use filesystem io to make sure we have the same
+            # permissions all around
+            # copyfileobj() should be efficient enough
+
+            # destination is a filename
+            with open(dest, 'wb') as out:
+                return self.save_to(out)
