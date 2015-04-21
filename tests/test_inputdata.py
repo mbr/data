@@ -5,7 +5,7 @@ from functools import partial
 import os
 import tempfile
 
-from six import text_type, binary_type, PY2, reraise
+from six import text_type, binary_type, PY2, reraise, StringIO
 import pytest
 
 from data import Data as I
@@ -28,7 +28,8 @@ def tmpfn(*args, **kwargs):
 @pytest.fixture(
     params=[u'This is sample data as unicode. äüöå \\',
             u'',
-            u'\0']
+            u'\0',
+            u'multi\nline\ninput']
 )
 def val(request):
     return request.param
@@ -145,3 +146,16 @@ def test_bytestring_reading_incremental(d, val, encoding):
     chunks = [c for c in iter(partial(d.readb, bufsize), b'')]
 
     assert b''.join(chunks) == val.encode(encoding)
+
+
+def test_readline(d, val):
+    buf = StringIO(val)
+
+    for line in buf.readlines():
+        assert line == d.readline()
+
+
+def test_readlines(d, val):
+    buf = StringIO(val)
+
+    assert buf.readlines() == d.readlines()

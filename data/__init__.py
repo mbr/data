@@ -1,6 +1,7 @@
 __version__ = '0.3.dev1'
 
 from contextlib import contextmanager
+from functools import partial
 from functools import wraps
 import os
 from shutil import copyfileobj
@@ -136,6 +137,12 @@ class Data(object):
     def readb(self, *args, **kwargs):
         return self.stream.read(*args, **kwargs)
 
+    @enable_unicode(True)
+    def readline(self, *args, **kwargs):
+        return self.stream.readline(*args)
+
+    def readlines(self, *args, **kwargs):
+        return list(iter(partial(self.readline, *args, **kwargs), u''))
 
     def save_to(self, file):
         dest = file
