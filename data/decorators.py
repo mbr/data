@@ -1,4 +1,5 @@
 from annotate import annotate
+from decorator import FunctionMaker
 from six import PY2, wraps
 if PY2:
     from funcsigs import signature
@@ -25,7 +26,13 @@ def auto_instantiate(*classes):
                     bvals.arguments[varname] = anno(val)
 
             return f(*bvals.args, **bvals.kwargs)
-        return _
+
+        # create another layer by wrapping in a FunctionMaker. this is done
+        # to preserve the original signature
+        return FunctionMaker.create(
+            f, 'return _(%(signature)s)', dict(_=_, __wrapped__=f)
+        )
+
     return decorator
 
 
