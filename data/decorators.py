@@ -1,8 +1,11 @@
+from annotate import annotate
 from six import PY2, wraps
 if PY2:
     from funcsigs import signature
 else:
     from inspect import signature
+
+from . import Data
 
 
 def auto_instantiate(*classes):
@@ -23,4 +26,16 @@ def auto_instantiate(*classes):
 
             return f(*bvals.args, **bvals.kwargs)
         return _
+    return decorator
+
+
+def data(*argnames):
+    # make it work if given only one argument (for Python3)
+    if len(argnames) == 1 and callable(argnames[0]):
+        return data()(argnames[0])
+
+    def decorator(f):
+        f = annotate(**dict((argname, Data) for argname in argnames))(f)
+        f = auto_instantiate(Data)(f)
+        return f
     return decorator
