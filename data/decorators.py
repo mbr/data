@@ -46,3 +46,41 @@ def data(*argnames):
         f = auto_instantiate(Data)(f)
         return f
     return decorator
+
+
+def file_arg(argname, file_arg_suffix='_file'):
+    file_arg_name = argname + file_arg_suffix
+
+    def decorator(f):
+        sig = signature(f)
+
+        if file_arg_name in sig.parameters:
+            raise ValueError('{} already has a parameter named {}'
+                             .format(f, file_arg_name))
+
+        @wraps(f)
+        def _(*args, **kwargs):
+            # remove file_arg_name from function list
+            a_file = kwargs.pop(file_arg_name, None)
+
+            # bind remaining arguments
+            pbargs = sig.bind_partial(*args, **kwargs)
+
+            # get data argument
+            a_data = pbargs.arguments.get(argname, None)
+
+            # if a Data object is already being passed in, use it
+            # instead of creating a new instance
+            if a_file is None and isinstance(a_data, Data):
+                d = a_data
+            else:
+                # create data replacement
+                d = Data(data=a_data, file=a_file)
+
+            # replace with data instance
+            pbargs.parameters[argname] = d
+
+            # call original function with instantiated data argument
+            return f(*pbargs.args, **pbargs.kwargs)
+        return _
+    return decorator
