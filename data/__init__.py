@@ -24,6 +24,23 @@ def enable_unicode(enabled):
 
 
 class Data(Iterator):
+    """Dynamically converts between various forms of passed in input data.
+
+    Exactly one of ``arg``, ``data`` or ``file`` must be not-``None``.
+
+    :param arg: Dynamic argument. If a bytestring, will be interpreted as raw
+                bytes. A unicode string will be interpreted as text and any
+                object that has a ``read()`` method as a file-like.
+                Any instance of ``Data`` will be passed through and rendered
+                unusable.
+    :param encoding: The data's encoding. Will be used for every conversion
+                     from bytestrings to text (unicode) if necessary and the
+                     other way around.
+    :param data: Buffer argument. If unicode string, will be interpreted as
+                 text, otherwise as bytestring.
+    :param file: File argument. Any object with a ``read()`` method will be
+                 treated as file-like. Everything else is considered a
+                 filename."""
     data = None
     text = None
     file = None
