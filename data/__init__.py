@@ -80,6 +80,7 @@ class Data(Iterator):
         self.encoding = encoding or 'utf8'
 
     def __bytes__(self):
+        """Returns the data as bytes (on Python3) or string (on Python2)."""
         if self.data is not None:
             return self.data
 
@@ -99,12 +100,16 @@ class Data(Iterator):
         raise ValueError('Broken Data, all None.')
 
     def __enter__(self):
+        """Context manager support. If data is a file-like, will close it upon
+        exiting the context manager."""
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
         self.close()
 
     def __iter__(self):
+        """Iterator support. Returns lines (similar to file objects) using
+        :meth:`~data.Data.readline`."""
         return self
 
     def __next__(self):
@@ -114,11 +119,13 @@ class Data(Iterator):
         return chunk
 
     def __str__(self):
+        """Returns the data as unicode (on Python3) or string (on Python2)."""
         if PY2:
             return self.__bytes__()
         return self.__unicode__()
 
     def __unicode__(self):
+        """Returns the data as unicode."""
         if self.text is not None:
             return self.text
 
@@ -151,6 +158,7 @@ class Data(Iterator):
         )
 
     def close(self):
+        """Closes input if based on open filelike. Otherwise does nothing."""
         # only close if we have something to close
         if getattr(self, '_stream', None) is None and self.file is None:
             return
@@ -159,6 +167,9 @@ class Data(Iterator):
 
     @property
     def stream(self):
+        """Returns a stream object (:func:`file`, :class:`~io.BytesIO` or
+        :class:`~StringIO.StringIO`) on the data."""
+
         if not hasattr(self, '_stream'):
             if self.file is not None:
                 self._stream = self.file
@@ -174,20 +185,32 @@ class Data(Iterator):
 
     @enable_unicode(True)
     def read(self, *args, **kwargs):
+        """Read method, implements same interface as :func:`file.read`. Always
+        returns ``unicode``."""
         return self.stream.read(*args, **kwargs)
 
     @enable_unicode(False)
     def readb(self, *args, **kwargs):
+        """Like :meth:`~data.Data.read`, but returns bytestrings instead."""
         return self.stream.read(*args, **kwargs)
 
     @enable_unicode(True)
     def readline(self, *args, **kwargs):
+        """Return one line from stream. Always returns unicode."""
         return self.stream.readline(*args)
 
     def readlines(self, *args, **kwargs):
+        """Return list of all lines. Always returns list of unicode."""
         return list(iter(partial(self.readline, *args, **kwargs), u''))
 
     def save_to(self, file):
+        """Save data to file.
+
+        Will copy by either writing out the data or using
+        :func:`shutil.copyfileobj`.
+
+        :param file: A file-like object (with a ``write`` method) or a
+                     filename."""
         dest = file
 
         if hasattr(dest, 'write'):
@@ -212,6 +235,12 @@ class Data(Iterator):
 
     @contextmanager
     def temp_saved(self, suffix='', prefix='tmp', dir=None):
+        """Saves data to temporary file and returns the relevant instance of
+        :func:`~tempfile.NamedTemporaryFile`. The resulting file is not
+        deleted upon closing, but when the context manager exits.
+
+        Other arguments are passed on to :func:`~tempfile.NamedTemporaryFile`.
+        """
         tmp = tempfile.NamedTemporaryFile(
             suffix=suffix,
             prefix=prefix,
