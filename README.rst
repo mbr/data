@@ -165,7 +165,7 @@ necessary, you can also support APIs that allow users to pass in filenames:
 
     >>> p = Parser()
     >>> p.parse_file('/dev/urandom')
-    Data(file=Data(file='/dev/urandom', encoding='utf8'), encoding='utf8')
+    Data(file='/dev/urandom', encoding='utf8')
 
 
 See the documentation at http://pythonhosted.org/data for an API reference.
