@@ -1,4 +1,3 @@
-from annotate import annotate
 from decorator import FunctionMaker
 from six import PY2, wraps
 if PY2:
@@ -7,6 +6,23 @@ else:
     from inspect import signature, _empty
 
 from . import Data
+
+
+def annotate(*args, **kwargs):
+    """Set function annotations (on Python2 and 3)."""
+    def decorator(f):
+        if not hasattr(f, '__annotations__'):
+            f.__annotations__ = kwargs.copy()
+        else:
+            f.__annotations__.update(kwargs)
+
+        if args:
+            if len(args) != 1:
+                raise ValueError('annotate supports only a single argument.')
+            f.__annotations__['return'] = args[0]
+        return f
+
+    return decorator
 
 
 def auto_instantiate(*classes):
@@ -30,8 +46,8 @@ def auto_instantiate(*classes):
     parameter for ``a`` will be converted to :class:`int` before calling the
     function.
 
-    Since Python 2 does not support annotations, the annotate_ module
-    should can be used:
+    Since Python 2 does not support annotations, the
+    :func:`~data.decorators.annotate` function should can be used:
 
     .. code-block:: python
 
@@ -47,8 +63,6 @@ def auto_instantiate(*classes):
 
     :note: When dealing with data, it is almost always more convenient to use
            the :func:`~data.decorators.data` decorator instead.
-
-    .. _annotate: https://pypi.python.org/pypi/annotate/0.5.1
     """
     def decorator(f):
         # collect our argspec

@@ -21,5 +21,5 @@ setup(
     url='http://github.com/mbr/data',
     license='MIT',
     packages=find_packages(exclude=['tests']),
-    install_requires=['six', 'annotate', 'decorator', 'funcsigs'],
+    install_requires=['six', 'decorator', 'funcsigs'],
 )
