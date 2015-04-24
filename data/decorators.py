@@ -94,7 +94,7 @@ def data(*argnames):
     """Designate an argument as a :class:`~data.Data` argument.
 
     Works by combining calls to :func:`~data.decorators.auto_instantiate` and
-    annotate_ on the named arguments.
+    :func:~data.decorators.annotate` on the named arguments.
 
     Example:
 
