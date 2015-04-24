@@ -49,6 +49,8 @@ def data(*argnames):
 
 
 def file_arg(argname, file_arg_suffix='_file'):
+    # this function is currently undocumented, as it's likely to be deemed a
+    # bad idea and be removed later
     file_arg_name = argname + file_arg_suffix
 
     def decorator(f):
