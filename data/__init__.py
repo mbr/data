@@ -53,11 +53,16 @@ class Data(Iterator):
 
         # when given a positional argument, try to be smart
         if arg is not None:
-            if hasattr(arg, 'read'):
+            if isinstance(arg, self.__class__):
+                # copy attributes
+                data = arg.data or arg.text
+                file = arg.file or arg.filename
+                encoding = arg.encoding
+                arg.data = arg.text = arg.file = arg.filename = None
+            elif hasattr(arg, 'read'):
                 file = arg
             else:
                 data = arg
-            arg = None
 
         if data is not None:
             if isinstance(data, text_type):

@@ -60,7 +60,7 @@ def valfile(val, tmpfile, encoding):
 
 @pytest.fixture(
     params=['file', 'filename', 'unicode', 'string', 'smart_file',
-            'smart_unicode', 'smart_string',
+            'smart_unicode', 'smart_string', 'move_constructor', 'mvc_file',
             pytest.mark.skipif("PY2")('file_no_encoding')]
 )
 def d(val, request, encoding, valfile):
@@ -80,6 +80,12 @@ def d(val, request, encoding, valfile):
         v = I(val.encode(encoding), encoding=encoding)
     elif request.param == 'file_no_encoding':
         v = I(open(valfile, 'r', encoding=encoding))
+    elif request.param == 'move_constructor':
+        inp = I(val, encoding=encoding)
+        v = I(inp)
+    elif request.param == 'mvc_file':
+        inp = I(file=open(valfile, 'rb'), encoding=encoding)
+        v = I(inp)
     else:
         raise RuntimeError
 
