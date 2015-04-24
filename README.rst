@@ -132,6 +132,38 @@ with one difference: There is no ``delete`` argument. The file is removed only
 when the context manager exits.
 
 
+Where it is useful
+------------------
+
+``data`` can be used on both sides of an API, either while passing values in:
+
+.. code-block:: python
+
+    >>> from data import Data as I
+    >>> m = I('{"this": "json"}')
+    >>> json.load(m)
+    {u'this': u'json'}
+
+or when getting values passed (see the data decorator example above). If
+necessary, you can also support APIs that allow users to pass in filenames:
+
+.. code-block:: python
+
+    >>> class Parser(object):
+    ...   @data('input')
+    ...   def parse(self, input, parser_opt=False):
+    ...     return input
+    ...   def parse_file(self, input_file, *args, **kwargs):
+    ...     return self.parse(I(file=input_file), *args, **kwargs)
+    ...
+    >>> p = Parser()
+    >>> p.parse_file('/dev/urandom')
+    Data(file=Data(file='/dev/urandom', encoding='utf8'), encoding='utf8')
+
+
+See the documentation at http://pythonhosted.org/data for an API reference.
+
+
 Python 2 and 3
 --------------
 
