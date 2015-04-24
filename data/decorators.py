@@ -2,9 +2,9 @@ from annotate import annotate
 from decorator import FunctionMaker
 from six import PY2, wraps
 if PY2:
-    from funcsigs import signature
+    from funcsigs import signature, _empty
 else:
-    from inspect import signature
+    from inspect import signature, _empty
 
 from . import Data
 
@@ -22,7 +22,7 @@ def auto_instantiate(*classes):
             for varname, val in bvals.arguments.items():
                 anno = sig.parameters[varname].annotation
 
-                if anno in classes:
+                if anno in classes or (len(classes) == 0 and anno != _empty):
                     bvals.arguments[varname] = anno(val)
 
             return f(*bvals.args, **bvals.kwargs)
