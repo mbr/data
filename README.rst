@@ -7,30 +7,34 @@ file-like or a filename.
 
 .. code-block:: python
 
+    >>> open('helloworld.txt', 'w').write('hello, world from a file')
+
     >>> from data import Data as I
     >>> a = I(u'hello, world')
-    >>> open('helloworld.txt', 'w').write('hello, world from a file')
     >>> b = I(file='helloworld.txt')
     >>> c = I(open('helloworld.txt'))
+
     >>> print unicode(a)
     hello, world
     >>> print unicode(b)
     hello, world from a file
     >>> print unicode(c)
     hello, world from a file
-    >>>
 
 This can be made even more convenient using the ``data`` decorator:
 
 .. code-block:: python
 
     >>> from data.decorators import data
+
     >>> @data('buf')
     ... def parse_buffer(buf, magic_mode=False):
     ...   return 'buf passed in as ' + repr(buf)
     ...
+
     >>> parse_buffer('hello')
     "buf passed in as Data(data='hello', encoding='utf8')"
+
     >>> rv = parse_buffer(open('helloworld.txt'))
     >>> assert 'file=' in rv
 
@@ -80,6 +84,7 @@ Iteration and line reading are also supported:
     u'I am\n'
     >>> h.readlines()
     [u'of many\n', u'lines']
+
     >>> i = I('line one\nline two\n')
     >>> list(iter(i))
     [u'line one\n', u'line two\n']
@@ -140,6 +145,7 @@ Where it is useful
 
     >>> import json
     >>> from data import Data as I
+
     >>> m = I('{"this": "json"}')
     >>> json.load(m)
     {u'this': u'json'}
@@ -156,6 +162,7 @@ necessary, you can also support APIs that allow users to pass in filenames:
     ...   def parse_file(self, input_file, *args, **kwargs):
     ...     return self.parse(I(file=input_file), *args, **kwargs)
     ...
+
     >>> p = Parser()
     >>> p.parse_file('/dev/urandom')
     Data(file=Data(file='/dev/urandom', encoding='utf8'), encoding='utf8')
