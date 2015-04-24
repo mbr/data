@@ -20,7 +20,7 @@ def sample_func(a, b, *c, **d):
 
 @pytest.fixture
 def decfunc_all():
-    f = copy_func(sample_func)
+    f = copy_func(sample_func, 'decfunc_all')
     f = annotate(a=int, b=str)(f)
     f = auto_instantiate()(f)
     return f
@@ -28,7 +28,7 @@ def decfunc_all():
 
 @pytest.fixture
 def decfunc_b():
-    f = copy_func(sample_func)
+    f = copy_func(sample_func, 'decfunc_b')
     f = annotate(b=str)(f)
     f = auto_instantiate()(f)
     return f
@@ -36,7 +36,7 @@ def decfunc_b():
 
 @pytest.fixture
 def decfunc_int():
-    f = copy_func(sample_func)
+    f = copy_func(sample_func, 'decfunc_int')
     f = annotate(a=int, b=str)(f)
     f = auto_instantiate(int)(f)
     return f
@@ -44,7 +44,7 @@ def decfunc_int():
 
 @pytest.fixture
 def decfunc_data():
-    f = copy_func(sample_func)
+    f = copy_func(sample_func, 'decfunc_data')
     return data('b')(f)
 
 
