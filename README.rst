@@ -31,8 +31,7 @@ This can be made even more convenient using the ``data`` decorator:
     ...
     >>> parse_buffer('hello')
     "buf passed in as Data(data='hello', encoding='utf8')"
-    >>> open('/tmp/demonstration.txt', 'w').write('sample data ' * 1024)
-    >>> rv = parse_buffer(open('/tmp/demonstration.txt'))
+    >>> rv = parse_buffer(open('helloworld.txt'))
     >>> assert 'file=' in rv
 
 
