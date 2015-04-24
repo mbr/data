@@ -20,6 +20,21 @@ file-like or a filename.
     hello, world from a file
     >>>
 
+This can be made even more convenient using the ``data`` decorator:
+
+.. code-block:: python
+
+    >>> from data.decorators import data
+    >>> @data('buf')
+    ... def parse_buffer(buf, magic_mode=False):
+    ...   return 'buf passed in as ' + repr(buf)
+    ...
+    >>> parse_buffer('hello')
+    "buf passed in as Data(data='hello', encoding='utf8')"
+    >>> open('/tmp/demonstration.txt', 'w').write('sample data ' * 1024)
+    >>> parse_buffer(open('/tmp/demonstration.txt'))
+    "buf passed in as Data(file=<open file '/tmp/demonstration.txt', mode 'r' at 0x23b6420>, encoding='utf8')"
+
 
 Fitting in
 ----------
