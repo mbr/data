@@ -6,11 +6,12 @@ from data.decorators import auto_instantiate, annotate, data
 import pytest
 
 
-# from https://stackoverflow.com/questions/6527633
-#      /how-can-i-make-a-deepcopy-of-a-function-in-python
+# based on https://stackoverflow.com/questions/6527633
+#          /how-can-i-make-a-deepcopy-of-a-function-in-python
+# fixed for python 3 support
 def copy_func(f, name=None):
-    return types.FunctionType(f.func_code, f.func_globals, name or f.func_name,
-                              f.func_defaults, f.func_closure)
+    return types.FunctionType(f.__code__, f.__globals__, name or f.__name__,
+                              f.__defaults__, f.__closure__)
 
 
 def sample_func(a, b, *c, **d):
