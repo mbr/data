@@ -10,6 +10,46 @@ from . import Data
 
 
 def auto_instantiate(*classes):
+    """Creates a decorator that will instantiate objects based on function
+    parameter annotations.
+
+    The decorator will check every argument passed into ``f``. If ``f`` has an
+    annotation for the specified parameter and the annotation is found in
+    ``classes``, the parameter value passed in will be used to construct a new
+    instance of the expression that is the annotation.
+
+    An example (Python 3):
+
+    .. code-block:: python
+
+        @auto_instantiate(int)
+        def foo(a: int, b: float):
+            pass
+
+    Any value passed in as ``b`` is left unchanged. Anything passed as the
+    parameter for ``a`` will be converted to :class:`int` before calling the
+    function.
+
+    Since Python 2 does not support annotations, the annotate_ module
+    should can be used:
+
+    .. code-block:: python
+
+        @auto_instantiate(int)
+        @annotate(a=int)
+        def foo(a, b):
+            pass
+
+
+    :param classes: Any number of classes/callables for which
+                    auto-instantiation should be performed. If empty, perform
+                    for all.
+
+    :note: When dealing with data, it is almost always more convenient to use
+           the :func:`~data.decorators.data` decorator instead.
+
+    .. _annotate: https://pypi.python.org/pypi/annotate/0.5.1
+    """
     def decorator(f):
         # collect our argspec
         sig = signature(f)
@@ -37,6 +77,26 @@ def auto_instantiate(*classes):
 
 
 def data(*argnames):
+    """Designate an argument as a :class:`~data.Data` argument.
+
+    Works by combining calls to :func:`~data.decorators.auto_instantiate` and
+    annotate_ on the named arguments.
+
+    Example:
+
+    .. code-block:: python
+
+       class Foo(object):
+           @data('bar')
+           def meth(self, foo, bar):
+               pass
+
+    Inside ``meth``, ``bar`` will always be a :class:`~data.Data` instance
+    constructed from the original value passed as ``bar``.
+
+    :param argnames: List of parameter names that should be data arguments.
+    :return: A decorator that converts the named arguments to
+             :class:`~data.Data` instances."""
     # make it work if given only one argument (for Python3)
     if len(argnames) == 1 and callable(argnames[0]):
         return data()(argnames[0])
