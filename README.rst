@@ -32,8 +32,8 @@ This can be made even more convenient using the ``data`` decorator:
     >>> parse_buffer('hello')
     "buf passed in as Data(data='hello', encoding='utf8')"
     >>> open('/tmp/demonstration.txt', 'w').write('sample data ' * 1024)
-    >>> parse_buffer(open('/tmp/demonstration.txt'))
-    "buf passed in as Data(file=<open file '/tmp/demonstration.txt', mode 'r' at 0x23b6420>, encoding='utf8')"
+    >>> rv = parse_buffer(open('/tmp/demonstration.txt'))
+    >>> assert 'file=' in rv
 
 
 Fitting in
@@ -59,7 +59,7 @@ Note how ``read`` returns unicode. Additionally, ``readb`` is available:
 
 .. code-block:: python
 
-    >>> f = I(u'I am Ünicode.')
+    >>> f = I(u'I am \xdcnicode.')
     >>> f.readb()
     'I am \xc3\x9cnicode.'
 
@@ -68,7 +68,7 @@ from and to unicode.
 
 .. code-block:: python
 
-    >>> g = I(u'I am Ünicode.', encoding='latin1')
+    >>> g = I(u'I am \xdcnicode.', encoding='latin1')
     >>> g.readb()
     'I am \xdcnicode.'
 
@@ -121,10 +121,10 @@ available:
 
     >>> l = I('goes into tmp')
     >>> with l.temp_saved() as tmp:
-    ...     print tmp.name
+    ...     print tmp.name.startswith('/tmp/tmp')
     ...     print l.read()
     ...
-    /tmp/tmpY7nv__
+    True
     goes into tmp
 
 ``temp_saved`` functions almost identically to ``tempfile.NamedTemporaryFile``,
@@ -139,6 +139,7 @@ Where it is useful
 
 .. code-block:: python
 
+    >>> import json
     >>> from data import Data as I
     >>> m = I('{"this": "json"}')
     >>> json.load(m)
