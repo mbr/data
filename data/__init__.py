@@ -149,7 +149,7 @@ class Data(Iterator):
             )
 
         if self.text is not None:
-            return '{}(data={}, encoding={!r]})'.format(
+            return '{}(data={}, encoding={!r})'.format(
                 cname, head(self.text), self.encoding,
             )
 
