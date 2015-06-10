@@ -88,10 +88,7 @@ class Data(Iterator):
             return self.text.encode(self.encoding)
 
         if self.file is not None:
-            if getattr(self.file, 'encoding', None):
-                # text is open in text mode
-                return self.file.read().encode(self.file.encoding)
-            return self.file.read()
+            return self.readb()
 
         if self.filename is not None:
             with open(self.filename, 'rb') as f:
@@ -129,8 +126,8 @@ class Data(Iterator):
         if self.text is not None:
             return self.text
 
-        if self.file is not None and getattr(self.file, 'encoding', None):
-            return self.file.read()
+        if self.file is not None:
+            return self.read()
 
         return self.__bytes__().decode(self.encoding)
 
